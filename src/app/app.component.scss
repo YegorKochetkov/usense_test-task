@@ -1,0 +1,9 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  min-width: fit-content;
+  max-width: 20rem;
+  margin-inline: auto;
+}
