@@ -1,6 +1,6 @@
-import { DebugElement } from "@angular/core";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { PasswordFieldComponent } from "./password-field.component";
+import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PasswordFieldComponent } from './password-field.component';
 
 describe('PasswordFieldTempComponent', () => {
   let component: PasswordFieldComponent;
@@ -29,6 +29,8 @@ describe('PasswordFieldTempComponent', () => {
     input.value = 'Red';
     input.dispatchEvent(event);
 
-    expect(component.passwordControl.value).toEqual('Red');
+    expect(component.passwordForm.controls.passwordControl.value).toEqual(
+      'Red'
+    );
   });
 });
