@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { allowedSymbolsRegexpValidator } from '../shared/allowed-symbols-regexp.directive';
 import { minLengthValidator } from '../shared/min-length.directive';
+import { notAllowedSymbolsRegexpValidator } from '../shared/not-allowed-symbols-regexp.directive';
 import {
   FormControl,
   FormGroup,
@@ -15,6 +16,7 @@ import {
   ALLOWED_SPEC_SYMBOLS_REGEXP,
   MAX_LENGTH,
   MIN_LENGTH,
+  NOT_ALLOWED_SYMBOLS_REGEXP,
 } from '../constants/constants';
 
 @Component({
@@ -44,11 +46,17 @@ import {
         [ngClass]="{
           'strength': true,
           'shortPassword':
-             !isCheckForMinLengthPassed() && isCheckForRequiredPassed(),
+             !isCheckForMinLengthPassed() &&
+             isCheckForRequiredPassed() &&
+             isCheckForNotAllowedSymbolsPassed(),
           'easyPassword':
-            isCheckForEasyPasswordPassed() && isCheckForMinLengthPassed(),
+            isCheckForEasyPasswordPassed() &&
+            isCheckForMinLengthPassed() &&
+            isCheckForNotAllowedSymbolsPassed(),
           'mediumPassword':
-             isCheckForMediumPasswordPassed() && isCheckForMinLengthPassed(),
+             isCheckForMediumPasswordPassed() &&
+             isCheckForMinLengthPassed() &&
+             isCheckForNotAllowedSymbolsPassed(),
           'strongPassword': isCheckForStrongPasswordPassed(),
         }"
       >
@@ -58,9 +66,13 @@ import {
         [ngClass]="{
           'strength': true,
           'shortPassword':
-             !isCheckForMinLengthPassed() && isCheckForRequiredPassed(),
+             !isCheckForMinLengthPassed() &&
+             isCheckForRequiredPassed() &&
+             isCheckForNotAllowedSymbolsPassed(),
           'mediumPassword':
-             isCheckForMediumPasswordPassed() && isCheckForMinLengthPassed(),
+             isCheckForMediumPasswordPassed() &&
+             isCheckForMinLengthPassed() &&
+             isCheckForNotAllowedSymbolsPassed(),
           'strongPassword': isCheckForStrongPasswordPassed(),
         }"
       >
@@ -70,7 +82,9 @@ import {
         [ngClass]="{
           'strength': true,
           'shortPassword':
-             !isCheckForMinLengthPassed() && isCheckForRequiredPassed(),
+             !isCheckForMinLengthPassed() &&
+             isCheckForRequiredPassed() &&
+             isCheckForNotAllowedSymbolsPassed(),
           'defaultStatus':
              isCheckForMediumPasswordPassed() &&
              !isCheckForStrongPasswordPassed() &&
@@ -81,13 +95,18 @@ import {
         The password is strong.
       </div>
 
-      <div class="hint">
-        Allowed english characters, numbers and symbols:
-        <span> {{ symbols }} </span>
-        <br />
-        The password must be between {{ minLength }} and
-        {{ maxLength }} characters
-      </div>
+      <section class="hint">
+        <p>
+          Allowed english characters, numbers and symbols:
+          <span> {{ symbols }} </span>
+          <br />
+          The password must be between {{ minLength }} and
+          {{ maxLength }} characters
+        </p>
+        <p *ngIf="!isCheckForNotAllowedSymbolsPassed()" class="notAllowed">
+          Entered characters that are not allowed!
+        </p>
+      </section>
     </form>
 
     <dialog #formDialog class="dialog">
@@ -115,6 +134,7 @@ export class PasswordFieldComponent {
         'specSymbolsRequired',
         ALLOWED_SPEC_SYMBOLS_REGEXP
       ),
+      notAllowedSymbolsRegexpValidator(NOT_ALLOWED_SYMBOLS_REGEXP),
     ]),
   });
 
@@ -132,6 +152,8 @@ export class PasswordFieldComponent {
     !this.passwordForm.controls.passwordControl.errors?.['allowedLetters'];
   isCheckForSpecSymbolsPassed = () =>
     !this.passwordForm.controls.passwordControl.errors?.['specSymbolsRequired'];
+  isCheckForNotAllowedSymbolsPassed = () =>
+    !this.passwordForm.controls.passwordControl.errors?.['notAllowedSymbols'];
 
   isCheckForMediumPasswordPassed = () =>
     (this.isCheckForSpecSymbolsPassed() && this.isCheckForLettersPassed()) ||
@@ -147,7 +169,7 @@ export class PasswordFieldComponent {
 
   onSubmit() {
     if (this.passwordForm.valid) {
-      this.passwordForm.controls.passwordControl.value?.trim();
+      this.passwordForm.controls.passwordControl.value;
       console.log(this.passwordForm);
       this.dialog.nativeElement.showModal();
     }
