@@ -1,7 +1,12 @@
-import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { allowedSymbols } from "./constants/constants";
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  ALLOWED_SPEC_SYMBOLS,
+  MAX_LENGTH,
+  MIN_LENGTH,
+} from '../constants/constants';
+
 @Component({
   selector: 'app-password-field',
   standalone: true,
@@ -19,8 +24,10 @@ import { allowedSymbols } from "./constants/constants";
       <div class="strong">The password is strong.</div>
       <div class="hint">
         Allowed english characters, numbers and symbols:
-        <span>{{ symbols }}</span
-        >.
+        <span> {{ symbols }} </span>
+        <br />
+        The password must be between {{ minLength }} and
+        {{ maxLength }} characters
       </div>
     </form>
   `,
@@ -28,7 +35,9 @@ import { allowedSymbols } from "./constants/constants";
 })
 export class PasswordFieldComponent {
   passwordControl = new FormControl('');
-  symbols = allowedSymbols.split('').join(', ');
+  symbols = ALLOWED_SPEC_SYMBOLS.split('').join(', ');
+  minLength = MIN_LENGTH;
+  maxLength = MAX_LENGTH;
 
   minLengthValidator() {}
   easyPasswordValidator() {}
