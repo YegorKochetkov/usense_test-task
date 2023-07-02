@@ -169,7 +169,6 @@ export class PasswordFieldComponent {
 
   onSubmit() {
     if (this.passwordForm.valid) {
-      this.passwordForm.controls.passwordControl.value;
       console.log(this.passwordForm);
       this.dialog.nativeElement.showModal();
     }
