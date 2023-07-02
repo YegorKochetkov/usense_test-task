@@ -1,0 +1,1 @@
+*{box-sizing:border-box}* :focus{outline-style:solid;outline-color:var(--primary-color)}:root{--primary-color: hsl(171, 68%, 43%);--default-status: hsl(0, 0%, 93%);--success-status: hsl(171, 68%, 60%);--warn-status: hsl(50, 100%, 70%);--error-status: hsl(0, 100%, 80%)}body{font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif}
