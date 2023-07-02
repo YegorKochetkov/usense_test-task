@@ -40,9 +40,46 @@ import {
         </button>
       </div>
 
-      <div class="easy">The password is easy.</div>
-      <div class="medium">The password is medium.</div>
-      <div class="strong">The password is strong.</div>
+      <div
+        [ngClass]="{
+          'strength': true,
+          'shortPassword':
+             !isCheckForMinLengthPassed() && isCheckForRequiredPassed(),
+          'easyPassword':
+            isCheckForEasyPasswordPassed() && isCheckForMinLengthPassed(),
+          'mediumPassword':
+             isCheckForMediumPasswordPassed() && isCheckForMinLengthPassed(),
+          'strongPassword': isCheckForStrongPasswordPassed(),
+        }"
+      >
+        The password is easy.
+      </div>
+      <div
+        [ngClass]="{
+          'strength': true,
+          'shortPassword':
+             !isCheckForMinLengthPassed() && isCheckForRequiredPassed(),
+          'mediumPassword':
+             isCheckForMediumPasswordPassed() && isCheckForMinLengthPassed(),
+          'strongPassword': isCheckForStrongPasswordPassed(),
+        }"
+      >
+        The password is medium.
+      </div>
+      <div
+        [ngClass]="{
+          'strength': true,
+          'shortPassword':
+             !isCheckForMinLengthPassed() && isCheckForRequiredPassed(),
+          'defaultStatus':
+             isCheckForMediumPasswordPassed() &&
+             !isCheckForStrongPasswordPassed() &&
+             isCheckForMinLengthPassed(),
+          'strongPassword': isCheckForStrongPasswordPassed(),
+        }"
+      >
+        The password is strong.
+      </div>
 
       <div class="hint">
         Allowed english characters, numbers and symbols:
@@ -81,6 +118,27 @@ export class PasswordFieldComponent {
   symbols = ALLOWED_SPEC_SYMBOLS.split('').join(', ');
   minLength = MIN_LENGTH;
   maxLength = MAX_LENGTH;
+
+  isCheckForRequiredPassed = () =>
+    !this.passwordForm.controls.passwordControl.errors?.['required'];
+  isCheckForMinLengthPassed = () =>
+    !this.passwordForm.controls.passwordControl.errors?.['minLength'];
+  isCheckForNumbersPassed = () =>
+    !this.passwordForm.controls.passwordControl.errors?.['numbers'];
+  isCheckForLettersPassed = () =>
+    !this.passwordForm.controls.passwordControl.errors?.['allowedLetters'];
+  isCheckForSpecSymbolsPassed = () =>
+    !this.passwordForm.controls.passwordControl.errors?.['specSymbols'];
+
+  isCheckForMediumPasswordPassed = () =>
+    (this.isCheckForSpecSymbolsPassed() && this.isCheckForLettersPassed()) ||
+    (this.isCheckForSpecSymbolsPassed() && this.isCheckForNumbersPassed()) ||
+    (this.isCheckForLettersPassed() && this.isCheckForNumbersPassed());
+
+  isCheckForEasyPasswordPassed = () =>
+    this.isCheckForSpecSymbolsPassed() ||
+    this.isCheckForLettersPassed() ||
+    this.isCheckForNumbersPassed();
 
   isCheckForStrongPasswordPassed = () => this.passwordForm.status === 'VALID';
 
