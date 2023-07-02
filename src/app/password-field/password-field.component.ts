@@ -110,8 +110,11 @@ export class PasswordFieldComponent {
       Validators.maxLength(MAX_LENGTH),
       minLengthValidator(MIN_LENGTH),
       allowedSymbolsRegexpValidator('allowedLetters', ALLOWED_LETTERS_REGEXP),
-      allowedSymbolsRegexpValidator('numbers', ALLOWED_NUMBERS_REGEXP),
-      allowedSymbolsRegexpValidator('specSymbols', ALLOWED_SPEC_SYMBOLS_REGEXP),
+      allowedSymbolsRegexpValidator('numbersRequired', ALLOWED_NUMBERS_REGEXP),
+      allowedSymbolsRegexpValidator(
+        'specSymbolsRequired',
+        ALLOWED_SPEC_SYMBOLS_REGEXP
+      ),
     ]),
   });
 
@@ -124,11 +127,11 @@ export class PasswordFieldComponent {
   isCheckForMinLengthPassed = () =>
     !this.passwordForm.controls.passwordControl.errors?.['minLength'];
   isCheckForNumbersPassed = () =>
-    !this.passwordForm.controls.passwordControl.errors?.['numbers'];
+    !this.passwordForm.controls.passwordControl.errors?.['numbersRequired'];
   isCheckForLettersPassed = () =>
     !this.passwordForm.controls.passwordControl.errors?.['allowedLetters'];
   isCheckForSpecSymbolsPassed = () =>
-    !this.passwordForm.controls.passwordControl.errors?.['specSymbols'];
+    !this.passwordForm.controls.passwordControl.errors?.['specSymbolsRequired'];
 
   isCheckForMediumPasswordPassed = () =>
     (this.isCheckForSpecSymbolsPassed() && this.isCheckForLettersPassed()) ||
