@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormDialogComponent } from '../form-dialog/form-dialog.component';
 import { PasswordHintsComponent } from '../password-hints/password-hints.component';
 import { allowedSymbolsRegexpValidator } from '../shared/allowed-symbols-regexp.directive';
 import { minLengthValidator } from '../shared/min-length.directive';
@@ -13,7 +14,6 @@ import {
 import {
   ALLOWED_LETTERS_REGEXP,
   ALLOWED_NUMBERS_REGEXP,
-  ALLOWED_SPEC_SYMBOLS,
   ALLOWED_SPEC_SYMBOLS_REGEXP,
   MAX_LENGTH,
   MIN_LENGTH,
@@ -24,7 +24,11 @@ import {
   selector: 'app-password-field',
   standalone: true,
   template: `
-    <form [formGroup]="passwordForm" (submit)="onSubmit()" class="form">
+    <form
+      [formGroup]="passwordForm"
+      (submit)="onSubmit(formDialog)"
+      class="form"
+    >
       <div class="inputField">
         <input
           type="password"
@@ -48,21 +52,21 @@ import {
       ></app-password-hints>
     </form>
 
-    <dialog #formDialog class="dialog">
-      <div class="dialog-content">
-        <p>Form data sent!</p>
-        <p>Password: {{ passwordForm.controls.passwordControl.value }}</p>
-        <button (click)="closeDialog()" class="button">Close</button>
-      </div>
-    </dialog>
+    <app-form-dialog
+      #formDialog
+      (closeDialog)="passwordForm.reset()"
+      [password]="passwordForm.controls.passwordControl.value"
+    ></app-form-dialog>
   `,
   styleUrls: ['./password-field.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, PasswordHintsComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PasswordHintsComponent,
+    FormDialogComponent,
+  ],
 })
 export class PasswordFieldComponent {
-  @ViewChild('formDialog', { static: true })
-  dialog!: ElementRef<HTMLDialogElement>;
-
   passwordForm = new FormGroup({
     passwordControl: new FormControl('', [
       Validators.required,
@@ -80,15 +84,10 @@ export class PasswordFieldComponent {
 
   isCheckForStrongPasswordPassed = () => this.passwordForm.status === 'VALID';
 
-  onSubmit() {
+  onSubmit(formDialog: FormDialogComponent) {
     if (this.passwordForm.valid) {
       console.log(this.passwordForm);
-      this.dialog.nativeElement.showModal();
+      formDialog.open();
     }
-  }
-
-  closeDialog() {
-    this.dialog.nativeElement.close();
-    this.passwordForm.reset();
   }
 }
