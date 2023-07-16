@@ -18,3 +18,10 @@
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
+.button {
+  padding: 10px;
+
+  border: solid 1px var(--primary-color);
+  border-radius: 10px;
+}

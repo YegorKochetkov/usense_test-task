@@ -1,0 +1,13 @@
+.dialog {
+  .dialog-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  border: solid 1px var(--primary-color);
+  border-radius: 10px;
+
+  button {
+    margin-top: 1rem;
+  }
+}
