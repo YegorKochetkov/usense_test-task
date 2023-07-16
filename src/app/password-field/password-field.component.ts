@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { PasswordHintsComponent } from '../password-hints/password-hints.component';
 import { allowedSymbolsRegexpValidator } from '../shared/allowed-symbols-regexp.directive';
 import { minLengthValidator } from '../shared/min-length.directive';
 import { notAllowedSymbolsRegexpValidator } from '../shared/not-allowed-symbols-regexp.directive';
@@ -22,7 +23,6 @@ import {
 @Component({
   selector: 'app-password-field',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <form [formGroup]="passwordForm" (submit)="onSubmit()" class="form">
       <div class="inputField">
@@ -42,71 +42,10 @@ import {
         </button>
       </div>
 
-      <div
-        [ngClass]="{
-          'strength': true,
-          'shortPassword':
-             !isCheckForMinLengthPassed() &&
-             isCheckForRequiredPassed() &&
-             isCheckForNotAllowedSymbolsPassed(),
-          'easyPassword':
-            isCheckForEasyPasswordPassed() &&
-            isCheckForMinLengthPassed() &&
-            isCheckForNotAllowedSymbolsPassed(),
-          'mediumPassword':
-             isCheckForMediumPasswordPassed() &&
-             isCheckForMinLengthPassed() &&
-             isCheckForNotAllowedSymbolsPassed(),
-          'strongPassword': isCheckForStrongPasswordPassed(),
-        }"
-      >
-        The password is easy.
-      </div>
-      <div
-        [ngClass]="{
-          'strength': true,
-          'shortPassword':
-             !isCheckForMinLengthPassed() &&
-             isCheckForRequiredPassed() &&
-             isCheckForNotAllowedSymbolsPassed(),
-          'mediumPassword':
-             isCheckForMediumPasswordPassed() &&
-             isCheckForMinLengthPassed() &&
-             isCheckForNotAllowedSymbolsPassed(),
-          'strongPassword': isCheckForStrongPasswordPassed(),
-        }"
-      >
-        The password is medium.
-      </div>
-      <div
-        [ngClass]="{
-          'strength': true,
-          'shortPassword':
-             !isCheckForMinLengthPassed() &&
-             isCheckForRequiredPassed() &&
-             isCheckForNotAllowedSymbolsPassed(),
-          'defaultStatus':
-             isCheckForMediumPasswordPassed() &&
-             !isCheckForStrongPasswordPassed() &&
-             isCheckForMinLengthPassed(),
-          'strongPassword': isCheckForStrongPasswordPassed(),
-        }"
-      >
-        The password is strong.
-      </div>
-
-      <section class="hint">
-        <p>
-          Allowed english characters, numbers and symbols:
-          <span> {{ symbols }} </span>
-          <br />
-          The password must be between {{ minLength }} and
-          {{ maxLength }} characters
-        </p>
-        <p *ngIf="!isCheckForNotAllowedSymbolsPassed()" class="notAllowed">
-          Entered characters that are not allowed!
-        </p>
-      </section>
+      <app-password-hints
+        [errors]="passwordForm.controls.passwordControl.errors"
+        [isFormValid]="isCheckForStrongPasswordPassed()"
+      ></app-password-hints>
     </form>
 
     <dialog #formDialog class="dialog">
@@ -118,6 +57,7 @@ import {
     </dialog>
   `,
   styleUrls: ['./password-field.component.scss'],
+  imports: [CommonModule, ReactiveFormsModule, PasswordHintsComponent],
 })
 export class PasswordFieldComponent {
   @ViewChild('formDialog', { static: true })
@@ -137,33 +77,6 @@ export class PasswordFieldComponent {
       notAllowedSymbolsRegexpValidator(NOT_ALLOWED_SYMBOLS_REGEXP),
     ]),
   });
-
-  symbols = ALLOWED_SPEC_SYMBOLS.split('').join(', ');
-  minLength = MIN_LENGTH;
-  maxLength = MAX_LENGTH;
-
-  isCheckForRequiredPassed = () =>
-    !this.passwordForm.controls.passwordControl.errors?.['required'];
-  isCheckForMinLengthPassed = () =>
-    !this.passwordForm.controls.passwordControl.errors?.['minLength'];
-  isCheckForNumbersPassed = () =>
-    !this.passwordForm.controls.passwordControl.errors?.['numbersRequired'];
-  isCheckForLettersPassed = () =>
-    !this.passwordForm.controls.passwordControl.errors?.['allowedLetters'];
-  isCheckForSpecSymbolsPassed = () =>
-    !this.passwordForm.controls.passwordControl.errors?.['specSymbolsRequired'];
-  isCheckForNotAllowedSymbolsPassed = () =>
-    !this.passwordForm.controls.passwordControl.errors?.['notAllowedSymbols'];
-
-  isCheckForMediumPasswordPassed = () =>
-    (this.isCheckForSpecSymbolsPassed() && this.isCheckForLettersPassed()) ||
-    (this.isCheckForSpecSymbolsPassed() && this.isCheckForNumbersPassed()) ||
-    (this.isCheckForLettersPassed() && this.isCheckForNumbersPassed());
-
-  isCheckForEasyPasswordPassed = () =>
-    this.isCheckForSpecSymbolsPassed() ||
-    this.isCheckForLettersPassed() ||
-    this.isCheckForNumbersPassed();
 
   isCheckForStrongPasswordPassed = () => this.passwordForm.status === 'VALID';
 
